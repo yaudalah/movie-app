@@ -11,18 +11,18 @@ import {
   PaginationItem,
   Skeleton,
   Stack,
-  Typography,
+  Typography
 } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
-  API_KEY,
   DISCOVER_API,
   IMAGE_PATH,
-  SEARCH_API,
+  SEARCH_API
 } from "../../services/api";
 import "./index.css";
+const apiKey = import.meta.env.VITE_API_KEY;
 
 const Home = () => {
   const [query] = useSearchParams();
@@ -45,7 +45,7 @@ const Home = () => {
         `${search ? SEARCH_API : DISCOVER_API}`,
         {
           params: {
-            api_key: API_KEY,
+            api_key: apiKey,
             query: search,
             page: pageApi,
           },
