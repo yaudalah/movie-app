@@ -5,12 +5,11 @@ import {
   Skeleton,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 import { IMAGE_PATH } from "../../services/api";
 import "./index.css";
 
-const MovieCard = ({ movie, loading }) => {
-  const [loaded, setLoaded] = useState(false);
+const MovieCard = ({ movie, loading, onLoad }) => {
   return (
     <Card
       sx={{
@@ -21,21 +20,19 @@ const MovieCard = ({ movie, loading }) => {
       className="grid-item"
     >
       {loading && <Skeleton variant="rectangular" width={500} height={300} />}
-      {loaded ? null : (
-        <Skeleton variant="rectangular" width={500} height={300} />
-      )}
-      {!loading && (
-        <CardMedia
-          component="img"
-          alt={movie.title}
-          image={IMAGE_PATH + movie.poster_path}
-          onLoad={() => setLoaded(true)}
-          onError={({ currentTarget }) => {
-            currentTarget.onerror = null;
-            currentTarget.src = `https://picsum.photos/200/300?${Math.random()}`;
-          }}
-        />
-      )}
+      <CardMedia
+        component="img"
+        sx={{ display: loading ? "none" : "block" }}
+        alt={movie.title}
+        loading="eager"
+        image={IMAGE_PATH + movie.poster_path}
+        onLoad={onLoad}
+        onError={({ currentTarget }) => {
+          currentTarget.onerror = null;
+          currentTarget.src = `https://picsum.photos/200/300?${Math.random()}`;
+        }}
+      />
+
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
           {loading === false ? (

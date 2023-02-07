@@ -26,6 +26,7 @@ const Home = () => {
   const [pageApi, setPageApi] = useState(1);
   const [totalPage, setTotalPage] = useState(10);
   const [loading, setLoading] = useState(true);
+  const counter = useRef(0);
 
   useEffect(() => {
     fetchMovies();
@@ -62,7 +63,15 @@ const Home = () => {
         console.log("Error", error.message);
       }
     }
-    setLoading(false);
+    // setLoading(false);
+  };
+
+  const imageLoaded = () => {
+    counter.current += 1;
+    if (counter.current >= movies.length) {
+      setLoading(false);
+      counter.current = 0;
+    }
   };
 
   return (
@@ -88,18 +97,31 @@ const Home = () => {
         </form>
       </header>
 
-      <Typography gutterBottom variant="subtitle1" component="div" align="right">
+      <Typography
+        gutterBottom
+        variant="subtitle1"
+        component="div"
+        align="right"
+      >
         Page: {pageApi}
       </Typography>
+
       <Box mt={2} mb={5} className="container">
         {movies.map((movie) => (
-          <MovieCard movie={movie} key={movie.id} loading={loading} />
+          <MovieCard
+            movie={movie}
+            key={movie.id}
+            loading={loading}
+            onLoad={imageLoaded}
+          />
         ))}
       </Box>
 
       {movies.length <= 0 ? (
         <>
-          <Typography variant="h4" mb={5}></Typography>
+          <Typography variant="h4" mb={5}>
+            Movie Not Available
+          </Typography>
           <Button variant="contained" startIcon={<ArrowBackIcon />} href="/">
             Back to Home
           </Button>
@@ -110,6 +132,7 @@ const Home = () => {
             color="info"
             shape="rounded"
             size="large"
+            siblingCount={2}
             count={totalPage}
             onChange={(e, value) => {
               if (e) e.preventDefault();

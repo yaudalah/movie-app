@@ -42,7 +42,7 @@
 }
 
 .search:focus {
-    box-shadow: 1px 1px 10px teal;
+    box-shadow: 1px 1px 10px rgba(8, 83, 159, 0.7);
 }
 
 .submit-search {
@@ -58,7 +58,7 @@
 
 .MuiCard-root:hover {
     transition: all 150ms ease-in;
-    box-shadow: 0 -5px 10px rgba(65, 62, 62, 0.7);
+    box-shadow: 0 5px 10px rgba(8, 83, 159, 0.7);
 }
 
 .MuiCardMedia-img:hover {
@@ -70,7 +70,7 @@
     transition: all 650ms ease;
   }
 
-@media only screen and (max-width: 780px) {
+@media only screen and (max-width: 67.5em) {
     .container {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
@@ -78,7 +78,7 @@
         margin: 0 auto;
     }   
 }
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 41.25em) {
     .container {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -86,11 +86,15 @@
         margin: 0 auto;
     }   
 }
-@media only screen and (max-width: 420px) {
+@media only screen and (max-width: 26.25em) {
     .container {
         display: grid;
         grid-template-columns: 1fr;
         gap: 1em;
         margin: 0 auto;
     }   
+
+    .header {
+        flex-wrap: wrap;
+    }
 }
