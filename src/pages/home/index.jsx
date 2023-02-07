@@ -4,20 +4,17 @@ import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
   Button,
-  Card,
-  CardContent,
-  CardMedia,
   Link,
   Pagination,
   PaginationItem,
-  Skeleton,
   Stack,
-  Typography
+  Typography,
 } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { DISCOVER_API, IMAGE_PATH, SEARCH_API } from "../../services/api";
+import MovieCard from "../../components/movie-card";
+import { DISCOVER_API, SEARCH_API } from "../../services/api";
 import "./index.css";
 const apiKey = import.meta.env.VITE_API_KEY;
 
@@ -48,10 +45,22 @@ const Home = () => {
           },
         }
       );
-      setTotalPage(data.total_pages);
+      console.log(data);
+      setTotalPage(data.total_pages > 500 ? 500 : data.total_pages);
       setMovies(data.results);
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      if (error.response) {
+        // Request made and server responded
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.log(error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log("Error", error.message);
+      }
     }
     setLoading(false);
   };
@@ -60,7 +69,7 @@ const Home = () => {
     <>
       <header className="center-max-size header">
         <Link href="/" color="inherit" underline="none" rel="noreferrer">
-          <span className={"brand"}>Movie App</span>
+          <h2 className={"brand"}>Movie App</h2>
         </Link>
         <form className="form" onSubmit={fetchMovies}>
           <input
@@ -78,121 +87,43 @@ const Home = () => {
           </button>
         </form>
       </header>
-      {movies.length ? (
-        <>
-          <Typography
-            gutterBottom
-            variant="caption"
-            component="div"
-            align="right"
-          >
-            Page: {pageApi}
-          </Typography>
-          <Box mt={2} mb={5} className="container">
-            {movies.map((movie) => (
-              <Card
-                sx={{
-                  maxWidth: 345,
-                  borderTopRightRadius: "25px",
-                  borderTopLeftRadius: "25px",
-                }}
-                className="grid-item"
-                key={movie.id}
-              >
-                {loading && (
-                  <Skeleton variant="rectangular" width={500} height={300} />
-                )}
-                {!loading && (
-                  <CardMedia
-                    component="img"
-                    alt={movie.title}
-                    image={IMAGE_PATH + movie.poster_path}
-                    onError={({ currentTarget }) => {
-                      currentTarget.onerror = null;
-                      currentTarget.src = `https://picsum.photos/200/300?${Math.random()}`;
-                    }}
-                  />
-                )}
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    {loading === false ? (
-                      movie.title
-                    ) : (
-                      <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-                    )}
-                  </Typography>
-                  <Typography
-                    align="justify"
-                    variant="body2"
-                    gutterBottom
-                    color="text.secondary"
-                    sx={{
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "-webkit-box",
-                      WebkitLineClamp: "3",
-                      WebkitBoxOrient: "vertical",
-                    }}
-                  >
-                    {loading === false ? (
-                      movie.overview
-                    ) : (
-                      <>
-                        <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-                        <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-                      </>
-                    )}
-                  </Typography>
-                  <Typography align="left" variant="subtitle1">
-                    Release: {movie.release_date}
-                  </Typography>
-                </CardContent>
-                {!loading && movie.vote_average ? (
-                  <span className={"movie-voting"}>{movie.vote_average}</span>
-                ) : null}
-                {loading && (
-                  <Skeleton
-                    className="movie-voting"
-                    variant="circular"
-                    width={16}
-                    height={16}
-                  />
-                )}
-              </Card>
-            ))}
-          </Box>
 
-          <Stack spacing={2} alignItems="center">
-            <Pagination
-              color="info"
-              shape="rounded"
-              showFirstButton
-              showLastButton
-              siblingCount={4}
-              // boundaryCount={1}
-              size="large"
-              count={totalPage}
-              onChange={(e, value) => {
-                if (e) e.preventDefault();
-                window.scrollTo(0, 0);
-                setPageApi(value);
-              }}
-              renderItem={(item) => (
-                <PaginationItem
-                  slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
-                  {...item}
-                />
-              )}
-            />
-          </Stack>
-        </>
-      ) : (
+      <Typography gutterBottom variant="subtitle1" component="div" align="right">
+        Page: {pageApi}
+      </Typography>
+      <Box mt={2} mb={5} className="container">
+        {movies.map((movie) => (
+          <MovieCard movie={movie} key={movie.id} loading={loading} />
+        ))}
+      </Box>
+
+      {movies.length <= 0 ? (
         <>
-          <Typography variant="h4">Movie Not Available</Typography>
+          <Typography variant="h4" mb={5}></Typography>
           <Button variant="contained" startIcon={<ArrowBackIcon />} href="/">
             Back to Home
           </Button>
         </>
+      ) : (
+        <Stack spacing={2} alignItems="center">
+          <Pagination
+            color="info"
+            shape="rounded"
+            size="large"
+            count={totalPage}
+            onChange={(e, value) => {
+              if (e) e.preventDefault();
+              window.scrollTo(0, 0);
+              setPageApi(value);
+            }}
+            renderItem={(item) => (
+              <PaginationItem
+                slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+                {...item}
+              />
+            )}
+          />
+        </Stack>
       )}
     </>
   );

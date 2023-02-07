@@ -1,0 +1,17 @@
+.grid-item {
+    position: relative;
+}
+
+.movie-voting{
+    position: absolute;
+    right: 1em;
+    top: .5em;
+    width: 16px; 
+    height: 16px;
+    background-color: #0F1014;
+    border: 1px solid #fafafa;
+    padding: 10px;
+    font-size: 12px;
+    color: #fafafa;
+    border-radius: 50%;
+}
