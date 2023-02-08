@@ -14,15 +14,15 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import MovieCard from "../../components/movie-card";
+import Navbar from "../../components/navbar";
 import { DISCOVER_API, SEARCH_API } from "../../services/api";
 import "./index.css";
 const apiKey = import.meta.env.VITE_API_KEY;
 
 const Home = () => {
   const [query] = useSearchParams();
-  const inputEl = useRef(null);
   const [movies, setMovies] = useState([]);
-  const [search, setsearch] = useState(query.get(`q`) || "");
+  const [search, setSearch] = useState(query.get(`q`) || "");
   const [pageApi, setPageApi] = useState(1);
   const [totalPage, setTotalPage] = useState(10);
   const [loading, setLoading] = useState(true);
@@ -76,26 +76,11 @@ const Home = () => {
 
   return (
     <>
-      <header className="center-max-size header">
-        <Link href="/" color="inherit" underline="none" rel="noreferrer">
-          <h2 className={"brand"}>Movie App</h2>
-        </Link>
-        <form className="form" onSubmit={fetchMovies}>
-          <input
-            ref={inputEl}
-            className="search"
-            name="q"
-            type="search"
-            id="search"
-            placeholder="Search..."
-            onInput={(e) => setsearch(e.target.value)}
-            value={search}
-          />
-          <button className="submit-search" type="submit">
-            <SearchIcon />
-          </button>
-        </form>
-      </header>
+      <Navbar
+        onSearch={(text) => setSearch(text)}
+        text={search}
+        fetchMovies={fetchMovies}
+      />
 
       <Typography
         gutterBottom
@@ -119,7 +104,7 @@ const Home = () => {
 
       {movies.length <= 0 ? (
         <>
-          <Typography variant="h4" mb={5}>
+          <Typography variant="h4" mb={5} gutterBottom>
             Movie Not Available
           </Typography>
           <Button variant="contained" startIcon={<ArrowBackIcon />} href="/">
