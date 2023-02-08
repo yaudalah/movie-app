@@ -1,10 +1,8 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
   Button,
-  Link,
   Pagination,
   PaginationItem,
   Stack,
