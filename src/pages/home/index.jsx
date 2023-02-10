@@ -83,6 +83,17 @@ const Home = () => {
         ))}
       </Box>
 
+      {movies.length <= 0 && (
+        <>
+          <Typography variant="h4" mb={5} gutterBottom>
+            Movie Not Available
+          </Typography>
+          <Button variant="contained" startIcon={<ArrowBackIcon />} href="/">
+            Back to Home
+          </Button>
+        </>
+      )}
+
       <Stack spacing={2} alignItems="center">
         <Typography
           gutterBottom
@@ -93,21 +104,11 @@ const Home = () => {
           Page: {pageApi} / {totalPage}
         </Typography>
 
-        {movies.length <= 0 && (
-          <>
-            <Typography variant="h4" mb={5} gutterBottom>
-              Movie Not Available
-            </Typography>
-            <Button variant="contained" startIcon={<ArrowBackIcon />} href="/">
-              Back to Home
-            </Button>
-          </>
-        )}
-
         <Pagination
           color="info"
           shape="rounded"
           size="large"
+          page={pageApi}
           siblingCount={2}
           count={totalPage}
           onChange={(e, value) => {
