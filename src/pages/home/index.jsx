@@ -32,8 +32,9 @@ const Home = () => {
 
   const fetchMovies = async (e) => {
     if (e) e.preventDefault();
+    setLoading(true);
+
     try {
-      setLoading(true);
       const { data } = await axios.get(
         `${search ? SEARCH_API : DISCOVER_API}`,
         {
@@ -44,24 +45,14 @@ const Home = () => {
           },
         }
       );
-      console.log(data);
-      setTotalPage(data.total_pages > 500 ? 500 : data.total_pages);
+
+      setTotalPage(Math.min(data.total_pages, 500));
       setMovies(data.results);
     } catch (error) {
-      if (error.response) {
-        // Request made and server responded
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.log(error.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.log("Error", error.message);
-      }
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-    // setLoading(false);
   };
 
   const imageLoaded = () => {
@@ -72,22 +63,14 @@ const Home = () => {
     }
   };
 
+  const handleSearch = (searchTerm) => {
+    setSearch(searchTerm);
+    setPageApi(1); // reset the page to 1 on every search
+  };
+
   return (
     <>
-      <Navbar
-        onSearch={(text) => setSearch(text)}
-        text={search}
-        fetchMovies={fetchMovies}
-      />
-
-      <Typography
-        gutterBottom
-        variant="subtitle1"
-        component="div"
-        align="right"
-      >
-        Page: {pageApi}
-      </Typography>
+      <Navbar onSearch={handleSearch} text={search} fetchMovies={fetchMovies} />
 
       <Box mt={2} mb={5} className="container">
         {movies.map((movie) => (
@@ -100,37 +83,45 @@ const Home = () => {
         ))}
       </Box>
 
-      {movies.length <= 0 ? (
-        <>
-          <Typography variant="h4" mb={5} gutterBottom>
-            Movie Not Available
-          </Typography>
-          <Button variant="contained" startIcon={<ArrowBackIcon />} href="/">
-            Back to Home
-          </Button>
-        </>
-      ) : (
-        <Stack spacing={2} alignItems="center">
-          <Pagination
-            color="info"
-            shape="rounded"
-            size="large"
-            siblingCount={2}
-            count={totalPage}
-            onChange={(e, value) => {
-              if (e) e.preventDefault();
-              window.scrollTo(0, 0);
-              setPageApi(value);
-            }}
-            renderItem={(item) => (
-              <PaginationItem
-                slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
-                {...item}
-              />
-            )}
-          />
-        </Stack>
-      )}
+      <Stack spacing={2} alignItems="center">
+        <Typography
+          gutterBottom
+          variant="subtitle1"
+          component="div"
+          align="right"
+        >
+          Page: {pageApi} / {totalPage}
+        </Typography>
+
+        {movies.length <= 0 && (
+          <>
+            <Typography variant="h4" mb={5} gutterBottom>
+              Movie Not Available
+            </Typography>
+            <Button variant="contained" startIcon={<ArrowBackIcon />} href="/">
+              Back to Home
+            </Button>
+          </>
+        )}
+
+        <Pagination
+          color="info"
+          shape="rounded"
+          size="large"
+          siblingCount={2}
+          count={totalPage}
+          onChange={(e, value) => {
+            window.scrollTo(0, 0);
+            setPageApi(value);
+          }}
+          renderItem={(item) => (
+            <PaginationItem
+              slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+              {...item}
+            />
+          )}
+        />
+      </Stack>
     </>
   );
 };
