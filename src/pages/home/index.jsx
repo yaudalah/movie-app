@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import MovieCard from "../../components/movie-card";
 import Navbar from "../../components/navbar";
 import { DISCOVER_API, SEARCH_API } from "../../services/api";
@@ -18,13 +18,14 @@ import "./index.css";
 const apiKey = import.meta.env.VITE_API_KEY;
 
 const Home = () => {
-  const [query] = useSearchParams();
+  const [query, setQuery] = useSearchParams();
   const [movies, setMovies] = useState([]);
-  const [search, setSearch] = useState(query.get(`q`) || "");
+  const [search, setSearch] = useState(query.get(`searchTerm`) || "");
   const [pageApi, setPageApi] = useState(1);
   const [totalPage, setTotalPage] = useState(10);
   const [loading, setLoading] = useState(true);
   const counter = useRef(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchMovies();
@@ -66,6 +67,11 @@ const Home = () => {
   const handleSearch = (searchTerm) => {
     setSearch(searchTerm);
     setPageApi(1); // reset the page to 1 on every search
+    setQuery({searchTerm});
+    // navigate({
+    //   pathname: "/",
+    //   search: `q=${searchTerm}`,
+    // });
   };
 
   return (
